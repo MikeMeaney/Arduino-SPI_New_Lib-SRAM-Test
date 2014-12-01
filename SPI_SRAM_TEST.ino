@@ -1,3 +1,16 @@
+//SPI SRAM TEST 
+// Mike Meaney 2014
+
+// This simple test was written to test the functionality 
+// of the 23A256 257 Kbit SRAM IC from Microchip with the
+// new SPI library written by Paul Stoffergen:
+// https://github.com/PaulStoffregen/SPI
+
+//If your currently using the existing built in Arduino SPI Lib,
+// then comment out the SPISettings line before the setup loop,
+// and any SPI.beginTransaction() / SPI.endTransaction() lines
+
+
 #include <SPI.h>
 
 #define SS_PIN 2
