@@ -45,6 +45,11 @@ uint8_t extSRAM_readByte(uint16_t address){
   digitalWrite(SS_PIN, LOW); // Pull CS Low to start
   uint8_t read_byte;
   SPI.transfer(READ_BYTE);
+  
+  //Because there are over 32,000 addresses a 16-bit number is needed
+  //problem is that the SPI.transfer() only sends 8 bits at a time
+  //so what we need todo is to send half the address and then the other
+  //half in two different transfers. Ditto for writing data too
   SPI.transfer((char)(address >> 8));
   SPI.transfer((char)(address));
   read_byte = SPI.transfer(0);  
