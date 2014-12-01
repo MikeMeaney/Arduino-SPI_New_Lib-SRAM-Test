@@ -1,17 +1,14 @@
 #include <SPI.h>
 
 #define SS_PIN 2
-
-//SPI features in testing
+//These are the settings that SRAM likes. It was trial and 
+//error to find the proper SPI_MODE
 SPISettings SRAMsettings(2000000, MSBFIRST, SPI_MODE0);
 
-
-//As Per the MicroChip Data Sheet
+//As Per the MicroChip Data Shee, these are the command 
+//set for the SRAM chip
 const uint8_t WRITE_BYTE = B00000010;
 const uint8_t READ_BYTE =  B00000011;
-
-const uint8_t TEST_BYTE = 0xA6;
-const uint16_t TEST_ADDRESS = 0xF60B;
 
 void setup(){
   Serial.begin(115200);
@@ -25,12 +22,12 @@ void loop(){
   for(uint16_t extAddress = 0; extAddress < 0x7FFF; extAddress++){
     uint8_t randInt = int(random(0, 255));
     Serial.print(F("0x"));
-    Serial.println(extAddress, HEX);
-    Serial.println(extSRAM_readByte(extAddress));
-    Serial.println(extSRAM_writeByte(extAddress,randInt));
-    Serial.println(extSRAM_readByte(extAddress));
+    Serial.println(extAddress, HEX); //Print the address to be manipulated
+    Serial.println(extSRAM_readByte(extAddress)); // Read it's value
+    Serial.println(extSRAM_writeByte(extAddress,randInt)); // Give it a random value
+    Serial.println(extSRAM_readByte(extAddress)); // Read back that random value
     Serial.println(F(" "));
-    delay(100);
+    delay(100); //Slow down there turbo!
   }  
 
 }
@@ -41,7 +38,12 @@ void loop(){
 uint8_t extSRAM_readByte(uint16_t address){
  
  //Begin SPI Transaction
+  //This is the magic sauce that makes the new SPI libray so great.
+  //This means that the SRAM's SPI settings we declared at the top will
+  //only be used once and then reset to defaults, or what ever settings
+  //others request using SPI.beginTransaction
   SPI.beginTransaction(SRAMsettings);
+  
   digitalWrite(SS_PIN, LOW); // Pull CS Low to start
   uint8_t read_byte;
   SPI.transfer(READ_BYTE);
